@@ -1,0 +1,22 @@
+server:
+  port: 8888
+  connectionTimeout: 20000
+
+spring:
+  application:
+    name: zuul-gateway
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+#zuul:
+#  routes:
+#    api-a:
+#      path: /service-hi/**
+#      serviceId: service-hi
+zuul:
+  set-content-length: true
+  SendResponseFilter:
+    post:
+      disable: false
