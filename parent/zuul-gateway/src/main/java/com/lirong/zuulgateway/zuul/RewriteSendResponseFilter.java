@@ -44,6 +44,7 @@ public class RewriteSendResponseFilter extends SendResponseFilter {
     public Object run() {
         try {
             writeResponse();
+            addResponseHeaders();
         }catch (Exception e){
             e.printStackTrace();
         }

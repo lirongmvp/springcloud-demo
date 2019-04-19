@@ -13,7 +13,7 @@ spring:
         - id: httpbin
           uri: http://httpbin.org:80/get
           predicates:
-            - Path=/163/**  #断言，复合这个条件才转发到指定URL
+            - Path=/163/**  #鏂█锛屽鍚堣繖涓潯浠舵墠杞彂鍒版寚瀹歎RL
 
 eureka:
   client:

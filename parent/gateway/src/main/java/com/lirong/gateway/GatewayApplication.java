@@ -23,7 +23,7 @@ public class GatewayApplication {
         ConfigurableApplicationContext run = SpringApplication.run(GatewayApplication.class, args);
         Map<String, AbstractGatewayFilterFactory> type = run.getBeansOfType(AbstractGatewayFilterFactory.class);
         for (String s : type.keySet()) {
-            System.out.println(s+"="+type.get(s).name());
+            System.out.println(s + "=" + type.get(s).name());
         }
     }
 
@@ -32,10 +32,9 @@ public class GatewayApplication {
         return builder.routes()
                 .route(p -> p
                         .path("/get")
-                        .filters(f -> f.addRequestHeader("Hello", "World"))
+                        .filters(f ->
+                                f.addRequestHeader("Hello", "World"))
                         .uri("http://httpbin.org:80"))
                 .build();
     }
-
-
 }
