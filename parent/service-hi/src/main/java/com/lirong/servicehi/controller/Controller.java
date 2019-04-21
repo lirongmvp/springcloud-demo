@@ -49,4 +49,21 @@ public class Controller {
             out.flush();
         }
     }
+
+    public static void main(String[] args) {
+        dg(new File("E:\\data"));
+    }
+    //递归输出所有文件，关注点：1.递归条件 2.什么时候结束
+    public static void dg(File f){
+        if(f.isDirectory()){
+            File[] list = f.listFiles();
+            if(list!=null) {
+                for (File s : list) {
+                    dg(s);
+                }
+            }
+        }else {
+            System.out.println(f.getAbsolutePath());
+        }
+    }
 }
