@@ -19,4 +19,9 @@ public class User {
     //ObjectMapper会根据value字段找
     @JsonProperty(value = "na_me")
     private String name;
+
+    public User(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

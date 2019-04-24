@@ -1,9 +1,13 @@
 package com.lirong.servicehi.controller;
 
+import com.lirong.servicehi.dao.User;
+import com.lirong.servicehi.sevice.myService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +29,15 @@ import java.io.OutputStream;
 public class Controller {
 
     @Value("${server.port}")
-    String port;
+    private String port;
+    @Autowired
+    private myService myService;
+
+    @GetMapping("/test")
+    public void hi2(){
+        myService.test();
+    }
+
 
     @GetMapping("/hi")
     public String hi(@RequestParam(value = "name", defaultValue = "forezp") String name){
@@ -38,7 +50,7 @@ public class Controller {
         File file = new File("F:\\music.m4a");
         try (InputStream in = new FileInputStream(file)) {
             int len = 0;
-            byte[] buffer = new byte[200];
+            byte[] buffer = new byte[1024];
             OutputStream out = response.getOutputStream();
 //            response.setContentType("audio/x-m4a");
             response.addHeader("Accept-Ranges", "bytes");
@@ -49,21 +61,10 @@ public class Controller {
             out.flush();
         }
     }
+    @GetMapping("/flux")
+    public Mono<User> hi2(@RequestParam(value = "name", defaultValue = "forezp") String name){
 
-    public static void main(String[] args) {
-        dg(new File("E:\\data"));
+        return Mono.just(new User("1",name));
     }
-    //递归输出所有文件，关注点：1.递归条件 2.什么时候结束
-    public static void dg(File f){
-        if(f.isDirectory()){
-            File[] list = f.listFiles();
-            if(list!=null) {
-                for (File s : list) {
-                    dg(s);
-                }
-            }
-        }else {
-            System.out.println(f.getAbsolutePath());
-        }
-    }
+
 }
