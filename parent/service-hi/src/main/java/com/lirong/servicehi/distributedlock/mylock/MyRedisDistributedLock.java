@@ -2,13 +2,12 @@ package com.lirong.servicehi.distributedlock.mylock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
 
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -85,10 +84,12 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
         String requestId = UUID.randomUUID().toString();
         threadLocal.set(requestId);
+        System.out.println(Thread.currentThread().getName()+"-start-"+ LocalDateTime.now());
         while (retryTimes-- > 0) {
             LOGGER.info("retryTimes:{}",retryTimes);
             Boolean aBoolean = ops.setIfAbsent(key, requestId, expireTime, TimeUnit.MILLISECONDS);
             if(aBoolean != null && aBoolean){
+                System.out.println(Thread.currentThread().getName()+"-end-"+ LocalDateTime.now());
                 return true;
             }
             try {
@@ -98,32 +99,20 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
                 return false;
             }
         }
+        System.out.println(Thread.currentThread().getName()+"-end-"+ LocalDateTime.now());
         return false;
     }
 
     @Override
-    public boolean releaseLock(String key) {
+    public Boolean releaseLock(String key) {
         try {
             String requestId = threadLocal.get();
-            return redisTemplate.execute((RedisCallback<Long>) connection -> {
-                Object nativeConnection = connection.getNativeConnection();
-                // 集群模式和单机模式虽然执行脚本的方法一样，但是没有共同的接口，所以只能分开执行
-                // 集群模式
-                if (nativeConnection instanceof JedisCluster) {
-                    return (Long) ((JedisCluster) nativeConnection).eval(UNLOCK_LUA,
-                            Collections.singletonList(key),
-                            Collections.singletonList(requestId)
-                    );
-                }
-                //单机模式
-                else if (nativeConnection instanceof Jedis) {
-                    return (Long) ((Jedis) nativeConnection).eval(UNLOCK_LUA,
-                            Collections.singletonList(key),
-                            Collections.singletonList(requestId)
-                    );
-                }
-                return 0L;
-            }).equals(RELEASE_LOCK_SUCCESS_RESULT);
+            return  redisTemplate.execute((RedisConnection connection) -> connection.eval(UNLOCK_LUA.getBytes(),
+                    ReturnType.INTEGER,
+                    1,
+                    key.getBytes(),
+                    requestId.getBytes()
+                    ).equals(RELEASE_LOCK_SUCCESS_RESULT));
         }catch (Exception e){
             LOGGER.error("release lock occured an exception", e);
             return false;

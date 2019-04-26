@@ -2,11 +2,9 @@ package com.lirong.servicehi.distributedlock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -55,26 +53,15 @@ public class RedisTool {
     public static boolean releaseDistributedLock(RedisTemplate<String, String> redisTemplate, String lockKey, String requestId) {
         //Lua脚本，确保原子性
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-        LOGGER.info("lockKey:{},requestId:{}",lockKey,requestId);
-        return redisTemplate.execute((RedisCallback<Long>) connection-> {
-            Object nativeConnection = connection.getNativeConnection();
-            // 集群模式和单机模式虽然执行脚本的方法一样，但是没有共同的接口，所以只能分开执行
-            // 集群模式
-            if (nativeConnection instanceof JedisCluster) {
-                return (Long)((JedisCluster)nativeConnection).eval(script,
-                        Collections.singletonList(lockKey),
-                        Collections.singletonList(requestId)
-                );
-            }
-            //单机模式
-            else if (nativeConnection instanceof Jedis){
-                return (Long)((Jedis)nativeConnection).eval(script,
-                        Collections.singletonList(lockKey),
-                        Collections.singletonList(requestId)
-                );
-            }
-            return 0L;
-        }).equals(RELEASE_LOCK_SUCCESS_RESULT);
+        DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
+        String execute = redisTemplate.execute(redisScript,
+                Collections.singletonList(lockKey),
+                Collections.singletonList(requestId));
+        LOGGER.info("execute:{}",execute);
+        if("1".equals(execute)){
+            return true;
+        }
+        return false;
     }
 
 }

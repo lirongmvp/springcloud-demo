@@ -127,7 +127,7 @@ public class Controller {
             }
 //            Thread.sleep(20000L);
             //可读性高
-            TimeUnit.SECONDS.sleep(15);
+            TimeUnit.SECONDS.sleep(10);
 
             boolean b = myDistributedLock.releaseLock(name);
             if(b){

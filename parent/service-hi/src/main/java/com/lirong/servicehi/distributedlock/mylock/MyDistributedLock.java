@@ -30,6 +30,6 @@ public interface MyDistributedLock {
     boolean getLock(String key,long expireTime, long sleepTime);
     boolean getLock(String key,int retryTimes, long sleepTime);
     boolean getLock(String key,long expireTime, int retryTimes,long sleepTime);
-    boolean releaseLock(String key);
+    Boolean releaseLock(String key);
 
 }
