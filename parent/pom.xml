@@ -16,8 +16,8 @@
 
     <modules>
         <module>eureka-server</module>
-        <module>service-feign</module>
         <module>service-hi</module>
+        <module>service-feign</module>
         <module>service-ribbon</module>
     </modules>
 
