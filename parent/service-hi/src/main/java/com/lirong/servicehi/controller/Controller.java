@@ -118,15 +118,13 @@ public class Controller {
 
     @GetMapping("/Lock/{name}")
     public String test2(@PathVariable(value = "name") String name) {
-
         try {
+            System.out.println("================");
             boolean lock = myDistributedLock.getLock(name,3);
             if(!lock){
                 LOGGER.warn("warn no lock");
                 return "no lock";
             }
-//            Thread.sleep(20000L);
-            //可读性高
             TimeUnit.SECONDS.sleep(10);
 
             boolean b = myDistributedLock.releaseLock(name);

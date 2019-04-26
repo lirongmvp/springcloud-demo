@@ -7,7 +7,6 @@ import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -84,12 +83,10 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
         String requestId = UUID.randomUUID().toString();
         threadLocal.set(requestId);
-        System.out.println(Thread.currentThread().getName()+"-start-"+ LocalDateTime.now());
         while (retryTimes-- > 0) {
             LOGGER.info("retryTimes:{}",retryTimes);
             Boolean aBoolean = ops.setIfAbsent(key, requestId, expireTime, TimeUnit.MILLISECONDS);
             if(aBoolean != null && aBoolean){
-                System.out.println(Thread.currentThread().getName()+"-end-"+ LocalDateTime.now());
                 return true;
             }
             try {
@@ -99,7 +96,6 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
                 return false;
             }
         }
-        System.out.println(Thread.currentThread().getName()+"-end-"+ LocalDateTime.now());
         return false;
     }
 
