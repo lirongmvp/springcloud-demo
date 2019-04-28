@@ -92,21 +92,20 @@ public class Controller {
 
     @GetMapping("/redisLock/{name}")
     public String test(@PathVariable(value = "name") String name) {
-        String s = UUID.randomUUID().toString();
+        String requestId = UUID.randomUUID().toString();
         int i = 0;
         //拿3次锁，没有拿到返回指定信息
         while (i < 3) {
-            boolean b = RedisTool.tryGetDistributedLock(redisTemplate, name, s, 60);
+            boolean b = RedisTool.tryGetDistributedLock(redisTemplate, name, requestId, 60);
             try {
                 if (b) {
                     //模拟方法执行
                     Thread.sleep(5000L);
-                    RedisTool.releaseDistributedLock(redisTemplate, name, s);
+                    RedisTool.releaseDistributedLock(redisTemplate, name, requestId);
                     LOGGER.info("i={}",i);
                     return name;
                 }
                 i++;
-
                 Thread.sleep(100L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -120,14 +119,14 @@ public class Controller {
     public String test2(@PathVariable(value = "name") String name) {
         try {
             System.out.println("================");
-            boolean lock = myDistributedLock.getLock(name,3);
+            String requestId = UUID.randomUUID().toString();
+            boolean lock = myDistributedLock.getLock(name,3,requestId);
             if(!lock){
                 LOGGER.warn("warn no lock");
                 return "no lock";
             }
             TimeUnit.SECONDS.sleep(10);
-
-            boolean b = myDistributedLock.releaseLock(name);
+            boolean b = myDistributedLock.releaseLock(name,requestId);
             if(b){
                 return "OK";
             }

@@ -23,13 +23,13 @@ public interface MyDistributedLock {
      */
     long SLEEP_MILLIS = 500;
 
-    boolean getLock(String key);
-    boolean getLock(String key,long expireTime);
-    boolean getLock(String key,int retryTimes);
-    boolean getLock(String key,long expireTime, int retryTimes);
-    boolean getLock(String key,long expireTime, long sleepTime);
-    boolean getLock(String key,int retryTimes, long sleepTime);
-    boolean getLock(String key,long expireTime, int retryTimes,long sleepTime);
-    Boolean releaseLock(String key);
+    boolean getLock(String key,String requestId);
+    boolean getLock(String key,long expireTime,String requestId);
+    boolean getLock(String key,int retryTimes,String requestId);
+    boolean getLock(String key,long expireTime, int retryTimes,String requestId);
+    boolean getLock(String key,long expireTime, long sleepTime,String requestId);
+    boolean getLock(String key,int retryTimes, long sleepTime,String requestId);
+    boolean getLock(String key,long expireTime, int retryTimes,long sleepTime,String requestId);
+    Boolean releaseLock(String key,String requestId);
 
 }

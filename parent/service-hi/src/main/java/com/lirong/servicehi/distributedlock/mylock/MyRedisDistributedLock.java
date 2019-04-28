@@ -7,7 +7,6 @@ import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,41 +31,47 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
      */
     private static final Long RELEASE_LOCK_SUCCESS_RESULT =1L;
     private RedisTemplate<String, String> redisTemplate;
-    //ThreadLocal是一个Map，key:当前线程，value是放入线程中的值，ThreadLocal对象并不代表一个线程
-    private ThreadLocal<String> threadLocal = new ThreadLocal<>();
+    /**
+     * TODO 疑问？
+     * ThreadLocal放入属性中，如果注入一次（单例），因为ThreadLocalMap的key是ThreadLocal，
+     * 所以可能会有多个请求去set(value),
+     *
+     * 可以把请求标识作为参数传入requestId
+     */
+//    private ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
     public MyRedisDistributedLock(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     @Override
-    public boolean getLock(String key) {
-        return super.getLock(key);
+    public boolean getLock(String key, String requestId) {
+        return super.getLock(key, requestId);
     }
 
     @Override
-    public boolean getLock(String key, long expireTime) {
-        return super.getLock(key, expireTime);
+    public boolean getLock(String key, long expireTime, String requestId) {
+        return super.getLock(key, expireTime, requestId);
     }
 
     @Override
-    public boolean getLock(String key, int retryTimes) {
-        return super.getLock(key, retryTimes);
+    public boolean getLock(String key, int retryTimes, String requestId) {
+        return super.getLock(key, retryTimes, requestId);
     }
 
     @Override
-    public boolean getLock(String key, long expireTime, int retryTimes) {
-        return super.getLock(key, expireTime, retryTimes);
+    public boolean getLock(String key, long expireTime, int retryTimes, String requestId) {
+        return super.getLock(key, expireTime, retryTimes, requestId);
     }
 
     @Override
-    public boolean getLock(String key, long expireTime, long sleepTime) {
-        return super.getLock(key, expireTime, sleepTime);
+    public boolean getLock(String key, long expireTime, long sleepTime, String requestId) {
+        return super.getLock(key, expireTime, sleepTime, requestId);
     }
 
     @Override
-    public boolean getLock(String key, int retryTimes, long sleepTime) {
-        return super.getLock(key, retryTimes, sleepTime);
+    public boolean getLock(String key, int retryTimes, long sleepTime, String requestId) {
+        return super.getLock(key, retryTimes, sleepTime, requestId);
     }
 
     /**
@@ -79,10 +84,10 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
      * @return true:拿到锁 false:重试以后依然没有拿到锁
      */
     @Override
-    public boolean getLock(String key, long expireTime, int retryTimes, long sleepTime) {
+    public boolean getLock(String key, long expireTime, int retryTimes, long sleepTime,String requestId) {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        String requestId = UUID.randomUUID().toString();
-        threadLocal.set(requestId);
+
+
         while (retryTimes-- > 0) {
             LOGGER.info("retryTimes:{}",retryTimes);
             Boolean aBoolean = ops.setIfAbsent(key, requestId, expireTime, TimeUnit.MILLISECONDS);
@@ -100,21 +105,18 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
     }
 
     @Override
-    public Boolean releaseLock(String key) {
+    public Boolean releaseLock(String key,String requestId) {
         try {
-            String requestId = threadLocal.get();
-            return  redisTemplate.execute((RedisConnection connection) -> connection.eval(UNLOCK_LUA.getBytes(),
+            Boolean b = redisTemplate.execute((RedisConnection connection) -> connection.eval(UNLOCK_LUA.getBytes(),
                     ReturnType.INTEGER,
                     1,
                     key.getBytes(),
                     requestId.getBytes()
-                    ).equals(RELEASE_LOCK_SUCCESS_RESULT));
+                    ));
+            return b!=null && b;
         }catch (Exception e){
             LOGGER.error("release lock occured an exception", e);
             return false;
-        }finally {
-            // 清除掉ThreadLocal中的数据，避免内存溢出
-            threadLocal.remove();
         }
     }
 }

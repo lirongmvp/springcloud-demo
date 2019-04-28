@@ -2,11 +2,11 @@ package com.lirong.servicehi.distributedlock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,6 +23,8 @@ public class RedisTool {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisTool.class);
 
     private static final Long RELEASE_LOCK_SUCCESS_RESULT = 1L;
+    //Lua脚本，确保原子性
+    private static final String UNLOCK="if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 
     /**
      * @param redisTemplate 客户端
@@ -51,17 +53,13 @@ public class RedisTool {
      * 释放锁的时候，有可能因为持锁之后方法执行时间大于锁的有效期，此时有可能已经被另外一个线程持有锁，所以不能直接删除
      */
     public static boolean releaseDistributedLock(RedisTemplate<String, String> redisTemplate, String lockKey, String requestId) {
-        //Lua脚本，确保原子性
-        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-        DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
-        String execute = redisTemplate.execute(redisScript,
-                Collections.singletonList(lockKey),
-                Collections.singletonList(requestId));
-        LOGGER.info("execute:{}",execute);
-        if("1".equals(execute)){
-            return true;
-        }
-        return false;
+        Boolean b = redisTemplate.execute((RedisConnection connection) -> connection.eval(UNLOCK.getBytes(),
+                ReturnType.INTEGER,
+                1,
+                lockKey.getBytes(),
+                requestId.getBytes()
+        ));
+        return b != null && b;
     }
 
 }
