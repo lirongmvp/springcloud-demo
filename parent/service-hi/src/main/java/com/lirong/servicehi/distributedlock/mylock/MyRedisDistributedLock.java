@@ -32,12 +32,19 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
     private static final Long RELEASE_LOCK_SUCCESS_RESULT =1L;
     private RedisTemplate<String, String> redisTemplate;
     /**
-     * TODO 疑问？
+     * TODO 疑问？ （因为是多个线程，没有影响，只不过ThreadLocalMap中的key是同一个对象而已（感觉这样不太容易理解））
+     *
+     * ThreadLocal<String> threadLocal = new ThreadLocal<>()
+     * 例如：Thread1:map(threadLocal,requestId_1)
+     *      Thread2:map(threadLocal,requestId_2)
+     *
+     *
      * ThreadLocal放入属性中，如果注入一次（单例），因为ThreadLocalMap的key是ThreadLocal，
-     * 所以可能会有多个请求去set(value),
+     * 所以可能会有多个请求去set(value),使用放入最后要remove.防止内存溢出
      *
      * 可以把请求标识作为参数传入requestId
      */
+    //可以这样使用
 //    private ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
     public MyRedisDistributedLock(RedisTemplate<String, String> redisTemplate) {
@@ -86,7 +93,6 @@ public class MyRedisDistributedLock extends AbstractMyDistributedLock {
     @Override
     public boolean getLock(String key, long expireTime, int retryTimes, long sleepTime,String requestId) {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
-
 
         while (retryTimes-- > 0) {
             LOGGER.info("retryTimes:{}",retryTimes);

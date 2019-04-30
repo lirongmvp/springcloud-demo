@@ -1,5 +1,7 @@
 package com.lirong.servicehi.thread;
 
+import com.lirong.servicehi.distributedlock.sequence.SequenceId;
+
 /**
  * Title: MyThread <br>
  * Description: MyThread <br>
@@ -14,27 +16,17 @@ public class MyThread implements Runnable {
 
     private static int i;
 
-    public MyThread() {
+    public static boolean b = false;
+    private static SequenceId sequenceId;
 
+    public static void setSequenceId(SequenceId sequenceId) {
+        MyThread.sequenceId = sequenceId;
     }
 
     @Override
     public void run() {
-        for(int a=0;a<3;a++){
-            i++;
-            System.out.println(Thread.currentThread().getName()+"===="+i);
-        }
+        Long id = sequenceId.getId(SequenceId.SEQUENCEID);
+        System.out.println(id);
     }
 
-    public static void init(){
-        i=1;
-    }
-
-    public static void main(String[] args) {
-        //多线程针对共享数据需要加锁，非共享数据不需要加锁，只是多线程并发
-        Thread thread1 = new Thread(new MyThread());
-        Thread thread2 = new Thread(new MyThread());
-        thread1.start();
-        thread2.start();
-    }
 }

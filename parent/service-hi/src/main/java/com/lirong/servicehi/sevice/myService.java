@@ -19,7 +19,15 @@ import org.springframework.stereotype.Component;
 @ConditionalOnClass(name = "com.lirong.servicehi.dao.User")
 public class myService implements CommandLineRunner , ApplicationRunner {
 
+    private TestService testService;
+
+    public myService(TestService testService) {
+        System.out.println("注入============");
+        this.testService = testService;
+    }
+
     public void test(){
+        testService.t();
         System.out.println("创建myservice");
     }
 

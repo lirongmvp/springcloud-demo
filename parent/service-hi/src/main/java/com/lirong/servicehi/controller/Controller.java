@@ -5,7 +5,9 @@ import com.lirong.servicehi.distributedlock.RedisTool;
 import com.lirong.servicehi.distributedlock.lock.RedisDistributedLock;
 import com.lirong.servicehi.distributedlock.mylock.MyDistributedLock;
 import com.lirong.servicehi.distributedlock.mylock.MyRedisDistributedLock;
+import com.lirong.servicehi.distributedlock.sequence.SequenceId;
 import com.lirong.servicehi.sevice.myService;
+import com.lirong.servicehi.thread.MyThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +50,31 @@ public class Controller {
     private MyDistributedLock myDistributedLock;
 
     private RedisDistributedLock redisDistributedLock;
+
+    private SequenceId sequenceId;
+
+
     @Autowired
-    public Controller(RedisTemplate<String, String> redisTemplate) {
+    public Controller(RedisTemplate<String, String> redisTemplate,SequenceId sequenceId) {
+        this.sequenceId = sequenceId;
         this.redisTemplate = redisTemplate;
         this.myDistributedLock = new MyRedisDistributedLock(redisTemplate);
         this.redisDistributedLock = new RedisDistributedLock(redisTemplate);
     }
+
+    /**
+     * test 生成ID是否规范
+     */
+    @GetMapping("/getId")
+    public void getId() {
+        int i =100;
+        MyThread.setSequenceId(sequenceId);
+        while (i-->0){
+            MyThread myThread = new MyThread();
+            new Thread(myThread).start();
+        }
+    }
+
 
     @GetMapping("/test")
     public void hi2() {
