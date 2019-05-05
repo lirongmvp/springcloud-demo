@@ -9,6 +9,14 @@ spring:
     host: 192.168.1.140
     port: 6379
     database: 10
+  data:
+    mongodb:
+      host: 192.168.1.3
+      port: 27017
+      database: test
+      authenticationDatabase: admin
+      username: test
+      password: test
 eureka:
   client:
     serviceUrl:

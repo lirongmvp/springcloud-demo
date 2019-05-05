@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 public class RedisTool {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisTool.class);
 
-    private static final Long RELEASE_LOCK_SUCCESS_RESULT = 1L;
     //Lua脚本，确保原子性
     private static final String UNLOCK="if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 
@@ -30,17 +29,14 @@ public class RedisTool {
      * @param redisTemplate 客户端
      * @param lockKey       锁
      * @param requestId     请求标识
-     * @param expireTime    超期时间
+     * @param expireTime    超期时间，秒
      * @return 是否获取成功
      */
     public static boolean tryGetDistributedLock(RedisTemplate<String, String> redisTemplate, String lockKey, String requestId, int expireTime) {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
         //设置有效期，防止死锁
         Boolean aBoolean = ops.setIfAbsent(lockKey, requestId, expireTime, TimeUnit.SECONDS);
-        if (aBoolean != null && aBoolean) {
-            return true;
-        }
-        return false;
+        return aBoolean != null && aBoolean;
     }
 
     /**

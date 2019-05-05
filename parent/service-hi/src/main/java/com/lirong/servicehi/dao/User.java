@@ -1,7 +1,8 @@
 package com.lirong.servicehi.dao;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Title: User <br>
@@ -13,15 +14,26 @@ import lombok.Data;
  * @since jdk8
  */
 @Data
+@Document(value = "user_test")
 public class User {
-    @JsonProperty(value = "id")
+
+//    @JsonProperty(value = "id")
+    @Id
     private String id;
     //ObjectMapper会根据value字段找
-    @JsonProperty(value = "na_me")
+//    @JsonProperty(value = "na_me")
     private String name;
 
     public User(String id, String name) {
         this.id = id;
         this.name = name;
     }
+
+    public User(String name) {
+        this.name = name;
+    }
+    public User() {
+
+    }
+
 }

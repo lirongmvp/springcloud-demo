@@ -6,13 +6,16 @@ import com.lirong.servicehi.distributedlock.lock.RedisDistributedLock;
 import com.lirong.servicehi.distributedlock.mylock.MyDistributedLock;
 import com.lirong.servicehi.distributedlock.mylock.MyRedisDistributedLock;
 import com.lirong.servicehi.distributedlock.sequence.SequenceId;
+import com.lirong.servicehi.sevice.MongoOps;
 import com.lirong.servicehi.sevice.myService;
 import com.lirong.servicehi.thread.MyThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.util.CloseableIterator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,24 +55,42 @@ public class Controller {
     private RedisDistributedLock redisDistributedLock;
 
     private SequenceId sequenceId;
-
+    @Autowired
+    private MongoOps mongoOps;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Autowired
-    public Controller(RedisTemplate<String, String> redisTemplate,SequenceId sequenceId) {
+    public Controller(RedisTemplate<String, String> redisTemplate, SequenceId sequenceId) {
         this.sequenceId = sequenceId;
         this.redisTemplate = redisTemplate;
         this.myDistributedLock = new MyRedisDistributedLock(redisTemplate);
         this.redisDistributedLock = new RedisDistributedLock(redisTemplate);
     }
 
+    @GetMapping("/mongo")
+    public void mongo() {
+        CloseableIterator<User> stream = mongoOps.getAllAsStream(User.class);
+        stream.forEachRemaining(System.out::println);
+//        mongoOps.getAllAsStream(User.class, System.out::println);
+    }
+
+    @GetMapping("/mongoInit")
+    public void mongoInit() {
+        for(int i=0;i<10;i++){
+            mongoTemplate.insert(new User("lirong"+i));
+        }
+    }
+
+
     /**
      * test 生成ID是否规范
      */
     @GetMapping("/getId")
     public void getId() {
-        int i =100;
+        int i = 100;
         MyThread.setSequenceId(sequenceId);
-        while (i-->0){
+        while (i-- > 0) {
             MyThread myThread = new MyThread();
             new Thread(myThread).start();
         }
@@ -123,7 +144,7 @@ public class Controller {
                     //模拟方法执行
                     Thread.sleep(5000L);
                     RedisTool.releaseDistributedLock(redisTemplate, name, requestId);
-                    LOGGER.info("i={}",i);
+                    LOGGER.info("i={}", i);
                     return name;
                 }
                 i++;
@@ -132,7 +153,7 @@ public class Controller {
                 e.printStackTrace();
             }
         }
-        LOGGER.info("i={}",i);
+        LOGGER.info("i={}", i);
         return "没有拿到锁";
     }
 
@@ -141,14 +162,14 @@ public class Controller {
         try {
             System.out.println("================");
             String requestId = UUID.randomUUID().toString();
-            boolean lock = myDistributedLock.getLock(name,3,requestId);
-            if(!lock){
+            boolean lock = myDistributedLock.getLock(name, 3, requestId);
+            if (!lock) {
                 LOGGER.warn("warn no lock");
                 return "no lock";
             }
             TimeUnit.SECONDS.sleep(10);
-            boolean b = myDistributedLock.releaseLock(name,requestId);
-            if(b){
+            boolean b = myDistributedLock.releaseLock(name, requestId);
+            if (b) {
                 return "OK";
             }
         } catch (InterruptedException e) {
