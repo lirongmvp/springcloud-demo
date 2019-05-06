@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.util.CloseableIterator;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,6 +72,16 @@ public class Controller {
 //        mongoOps.getAllAsStream(User.class, System.out::println);
     }
 
+
+    @GetMapping("/getparm")
+    public void getparm(HttpServletRequest request) {
+        String name1 = request.getParameter("name");
+        if(name1 instanceof String){
+            System.out.println(name1+"字符串");
+        }
+        System.out.println(name1);
+    }
+
     @GetMapping("/mongoInit")
     public void mongoInit() {
         for(int i=0;i<10;i++){
@@ -96,10 +103,15 @@ public class Controller {
         }
     }
 
-
-    @GetMapping("/test")
-    public void hi2() {
+    /**
+     *
+     * 不加注解，只有是表单数据格式"Content type 'multipart/form-data;charset=UTF-8'
+     * 加注解,"Content type 'application/json;charset=UTF-8'
+     */
+    @PostMapping("/test")
+    public void hi2(@RequestBody User user) {
         myService.test();
+        System.out.println(user);
     }
 
 

@@ -4,7 +4,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.stereotype.Component;
 
 /**
  * Title: myService <br>
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0.0
  * @since jdk8
  */
-@Component
+//@Component
 @ConditionalOnClass(name = "com.lirong.servicehi.dao.User")
 public class myService implements CommandLineRunner , ApplicationRunner {
 
@@ -27,7 +26,7 @@ public class myService implements CommandLineRunner , ApplicationRunner {
     }
 
     public void test(){
-        testService.t();
+//        testService.t();
         System.out.println("创建myservice");
     }
 
