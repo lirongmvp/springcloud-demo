@@ -21,3 +21,8 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://admin:admin123@localhost:8761/eureka/
+#aws:
+#  accessKey: username  #账号
+#  secretKey: Password  #密码
+#  serviceEndpoint: http://192.168.1.1 #地址
+#  bucketName: name #桶名称
