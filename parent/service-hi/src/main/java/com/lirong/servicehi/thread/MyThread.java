@@ -28,5 +28,4 @@ public class MyThread implements Runnable {
         Long id = sequenceId.getId(SequenceId.SEQUENCEID);
         System.out.println(id);
     }
-
 }
