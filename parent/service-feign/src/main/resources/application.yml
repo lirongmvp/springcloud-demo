@@ -1,9 +1,18 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://admin:admin123@localhost:8761/eureka/
 server:
   port: 8765
 spring:
   application:
     name: service-feign
+  zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
+    base-url: http://localhost:9411
+    enabled: true
+    locator:
+      discovery:
+        enabled: true
+  sleuth:
+    sampler:
+      probability: 1

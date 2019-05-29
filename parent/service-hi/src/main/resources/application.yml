@@ -17,10 +17,21 @@ spring:
       authenticationDatabase: admin
       username: test
       password: test
+  zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
+    base-url: http://localhost:9411
+    enabled: true
+    locator:
+      discovery:
+        enabled: true
+  sleuth:
+    sampler:
+      probability: 1
 eureka:
   client:
     serviceUrl:
       defaultZone: http://admin:admin123@localhost:8761/eureka/
+
+
 #aws:
 #  accessKey: username  #账号
 #  secretKey: Password  #密码
