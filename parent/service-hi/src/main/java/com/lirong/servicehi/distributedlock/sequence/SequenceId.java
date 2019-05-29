@@ -29,7 +29,6 @@ public class SequenceId {
     }
 
     public Long getId(String key){
-        ValueOperations<String, String> ops = redisTemplate.opsForValue();
         RedisAtomicLong redisAtomicLong = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
         return redisAtomicLong.getAndIncrement();
     }
