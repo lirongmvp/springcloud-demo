@@ -3,9 +3,6 @@ package com.lirong.servicehi.sevice;
 import com.lirong.servicehi.annotation.UserAnno;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 /**
  * Title: TestService <br>
  * Description: TestService <br>
@@ -23,17 +20,4 @@ public class TestService {
         System.out.println(name);
     }
 
-    //AOP
-    public static void main(String[] args) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        Class<TestService> testService = TestService.class;
-        Method[] methods = testService.getMethods();
-        for (Method method : methods) {
-            UserAnno annotation = method.getAnnotation(UserAnno.class);
-            if (annotation != null) {
-                String name = annotation.name();
-                method.setAccessible(true);
-                method.invoke(testService.newInstance(), name);
-            }
-        }
-    }
 }

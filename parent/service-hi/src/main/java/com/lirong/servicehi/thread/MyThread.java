@@ -1,6 +1,13 @@
 package com.lirong.servicehi.thread;
 
+import com.github.pgcomb.pool.PoolUtil;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.lirong.servicehi.distributedlock.sequence.SequenceId;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Title: MyThread <br>
@@ -27,5 +34,39 @@ public class MyThread implements Runnable {
     public void run() {
         Long id = sequenceId.getId(SequenceId.SEQUENCEID);
         System.out.println(id);
+        ThreadPoolExecutor ll = PoolUtil.getPool("ll", 1, 2, 0, 5);
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+//        ThreadPoolExecutor ll = PoolUtil.getPool("ll", 5, 10, 0, 50);
+        //自定义线程池拒接策略
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("" + "-pool-%d").build();
+        ThreadPoolExecutor ll = new ThreadPoolExecutor(2, 3, 0, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(4),(r, executor1) -> {
+            try {
+                while (executor1.getQueue().size() > 4 * 0.8) {
+                    System.out.println("线程池睡眠...");
+                    Thread.sleep(50L);
+                }
+            } catch (InterruptedException e) {
+
+                Thread.currentThread().interrupt();
+            }
+            executor1.submit(r);
+        });
+        int i =40;
+        while (i-->0){
+            System.out.println("=======");
+            ll.submit(()->{
+                System.out.println("时间："+System.currentTimeMillis());
+            });
+        }
+        ll.shutdown();
+        while (!ll.awaitTermination(30,TimeUnit.SECONDS)){
+            System.out.println("等待线程池关闭");
+        }
+
+
     }
 }
