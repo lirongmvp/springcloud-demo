@@ -22,6 +22,6 @@ public class Controller {
 
     @GetMapping(value = "/hi")
     public String sayHi(@RequestParam String name) {
-        return feignService.wenServiceHi( name );
+        return feignService.wenServiceHi(name);
     }
 }

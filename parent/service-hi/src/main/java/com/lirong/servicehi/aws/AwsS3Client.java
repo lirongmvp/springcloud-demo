@@ -20,28 +20,28 @@ public interface AwsS3Client {
 
     /**
      * 连接aws
-     * 
+     *
      * @return
      */
     AmazonS3 connectionAwsS3Server() throws UnsupportedEncodingException;
 
     /**
      * 客户端配置
-     * 
+     *
      * @return
      */
     ClientConfiguration clientConfiguration();
 
     /**
      * 端点配置
-     * 
+     *
      * @return
      */
     AwsClientBuilder.EndpointConfiguration endpointConfiguration();
 
     /**
      * 登录凭证配置
-     * 
+     *
      * @return
      */
     AWSCredentialsProvider awsCredentialsProvider() throws UnsupportedEncodingException;

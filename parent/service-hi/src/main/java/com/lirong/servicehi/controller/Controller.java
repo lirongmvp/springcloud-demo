@@ -6,6 +6,7 @@ import com.lirong.servicehi.distributedlock.lock.RedisDistributedLock;
 import com.lirong.servicehi.distributedlock.mylock.MyDistributedLock;
 import com.lirong.servicehi.distributedlock.mylock.MyRedisDistributedLock;
 import com.lirong.servicehi.distributedlock.sequence.SequenceId;
+import com.lirong.servicehi.resp.UserResp;
 import com.lirong.servicehi.sevice.MongoOps;
 import com.lirong.servicehi.sevice.myService;
 import com.lirong.servicehi.thread.MyThread;
@@ -56,6 +57,8 @@ public class Controller {
     private MongoOps mongoOps;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private UserResp userResp;
 
     @Autowired
     public Controller(RedisTemplate<String, String> redisTemplate, SequenceId sequenceId) {
@@ -76,17 +79,21 @@ public class Controller {
     @GetMapping("/getparm")
     public void getparm(HttpServletRequest request) {
         String name1 = request.getParameter("name");
-        if(name1 instanceof String){
-            System.out.println(name1+"字符串");
+        if (name1 instanceof String) {
+            System.out.println(name1 + "字符串");
         }
         System.out.println(name1);
     }
 
     @GetMapping("/mongoInit")
     public void mongoInit() {
-        for(int i=0;i<10;i++){
-            mongoTemplate.insert(new User("lirong"+i));
+        for (int i = 0; i < 10; i++) {
+            mongoTemplate.insert(new User("lirong" + i));
         }
+    }
+    @GetMapping("/add")
+    public void add() {
+        userResp.save(new User("lirong"));
     }
 
 
@@ -104,7 +111,6 @@ public class Controller {
     }
 
     /**
-     *
      * 不加注解，只有是表单数据格式"Content type 'multipart/form-data;charset=UTF-8'
      * 加注解,"Content type 'application/json;charset=UTF-8'
      */
@@ -189,8 +195,6 @@ public class Controller {
         }
         return "false";
     }
-
-
 
 
 }

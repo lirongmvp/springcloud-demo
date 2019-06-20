@@ -17,9 +17,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public void cacheError(Exception e) {
-        if(e.getMessage().equals("Filter threw Exception")){
+        if (e.getMessage().equals("Filter threw Exception")) {
 
-        }else {
+        } else {
             e.printStackTrace();
         }
     }

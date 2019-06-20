@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
  */
 //@Component
 @ConditionalOnClass(name = "com.lirong.servicehi.dao.User")
-public class myService implements CommandLineRunner , ApplicationRunner {
+public class myService implements CommandLineRunner, ApplicationRunner {
 
     private TestService testService;
 
@@ -25,7 +25,7 @@ public class myService implements CommandLineRunner , ApplicationRunner {
         this.testService = testService;
     }
 
-    public void test(){
+    public void test() {
 //        testService.t();
         System.out.println("创建myservice");
     }

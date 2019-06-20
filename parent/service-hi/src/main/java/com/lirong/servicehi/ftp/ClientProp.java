@@ -44,8 +44,7 @@ public interface ClientProp {
     /**
      * 是否相同
      *
-     * @param clientProp
-     *            clientProp
+     * @param clientProp clientProp
      * @return boolean
      */
     default boolean sameAddress(ClientProp clientProp) {

@@ -24,10 +24,10 @@ public class Controller {
 
     @GetMapping(value = "/hi")
     public String hi(@RequestParam String name) {
-        ResponseEntity<String> entity = restTemplate.getForEntity("http://service-hi/hi?name="+name, String.class);
-        if(entity.getStatusCode().is2xxSuccessful()){
+        ResponseEntity<String> entity = restTemplate.getForEntity("http://service-hi/hi?name=" + name, String.class);
+        if (entity.getStatusCode().is2xxSuccessful()) {
             return entity.getBody();
-        }else {
+        } else {
             return "fail";
         }
     }

@@ -17,11 +17,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(value = "user_test")
 public class User {
 
-//    @JsonProperty(value = "id")
+    //    @JsonProperty(value = "id")
     @Id
     private String id;
     //ObjectMapper会根据value字段找
-//    @JsonProperty(value = "na_me")
+//    @JsonProperty(value = "name")
     private String name;
 
     public User(String id, String name) {
@@ -32,6 +32,7 @@ public class User {
     public User(String name) {
         this.name = name;
     }
+
     public User() {
 
     }

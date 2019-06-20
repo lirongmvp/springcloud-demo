@@ -17,18 +17,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class SequenceId {
 
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     public static final String SEQUENCEID = "SequenceId";
 
 
     public SequenceId(RedisTemplate<String, String> redisTemplate) {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        ops.setIfAbsent(SEQUENCEID,"10000");
+        ops.setIfAbsent(SEQUENCEID, "10000");
         this.redisTemplate = redisTemplate;
     }
 
-    public Long getId(String key){
+    /**
+     * 得到数据库中的数字，然后加1
+     *
+     * @param key
+     * @return
+     */
+    public Long getId(String key) {
         RedisAtomicLong redisAtomicLong = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
         return redisAtomicLong.getAndIncrement();
     }

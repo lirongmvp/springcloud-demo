@@ -15,18 +15,18 @@ import java.util.UUID;
 
 /**
  * @author fuwei.deng
- * @date 2017年6月14日 下午3:11:14
  * @version 1.0.0
+ * @date 2017年6月14日 下午3:11:14
  */
 public class RedisDistributedLock extends AbstractDistributedLock {
 
-	private final Logger logger = LoggerFactory.getLogger(RedisDistributedLock.class);
+    private final Logger logger = LoggerFactory.getLogger(RedisDistributedLock.class);
 
-	private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
-	private ThreadLocal<String> lockFlag = new ThreadLocal<>();
+    private ThreadLocal<String> lockFlag = new ThreadLocal<>();
 
-	public static final String UNLOCK_LUA;
+    public static final String UNLOCK_LUA;
 
     static {
         StringBuilder sb = new StringBuilder();
@@ -39,56 +39,56 @@ public class RedisDistributedLock extends AbstractDistributedLock {
         UNLOCK_LUA = sb.toString();
     }
 
-	public RedisDistributedLock(RedisTemplate<String, String> redisTemplate) {
-		super();
-		this.redisTemplate = redisTemplate;
-	}
+    public RedisDistributedLock(RedisTemplate<String, String> redisTemplate) {
+        super();
+        this.redisTemplate = redisTemplate;
+    }
 
-	@Override
-	public boolean lock(String key, long expire, int retryTimes, long sleepMillis) {
-		boolean result = setRedis(key, expire);
-		// 如果获取锁失败，按照传入的重试次数进行重试
-		while((!result) && retryTimes-- > 0){
-			try {
-				logger.debug("lock failed, retrying{}..." ,retryTimes);
-				Thread.sleep(sleepMillis);
-			} catch (InterruptedException e) {
-			    Thread.currentThread().interrupt();
-				return false;
-			}
-			result = setRedis(key, expire);
-		}
-		return result;
-	}
+    @Override
+    public boolean lock(String key, long expire, int retryTimes, long sleepMillis) {
+        boolean result = setRedis(key, expire);
+        // 如果获取锁失败，按照传入的重试次数进行重试
+        while ((!result) && retryTimes-- > 0) {
+            try {
+                logger.debug("lock failed, retrying{}...", retryTimes);
+                Thread.sleep(sleepMillis);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+            result = setRedis(key, expire);
+        }
+        return result;
+    }
 
-	private boolean setRedis(String key, long expire) {
-		try {
-			String result = redisTemplate.execute((RedisCallback<String>) connection -> {
+    private boolean setRedis(String key, long expire) {
+        try {
+            String result = redisTemplate.execute((RedisCallback<String>) connection -> {
                 JedisCommands commands = (JedisCommands) connection.getNativeConnection();
                 String uuid = UUID.randomUUID().toString();
                 lockFlag.set(uuid);
                 return commands.set(key, uuid, "NX", "PX", expire);
             });
-			return !StringUtils.isEmpty(result);
-		} catch (Exception e) {
-			logger.error("set redis occured an exception", e);
-		}
-		return false;
-	}
+            return !StringUtils.isEmpty(result);
+        } catch (Exception e) {
+            logger.error("set redis occured an exception", e);
+        }
+        return false;
+    }
 
-	@Override
-	public boolean releaseLock(String key) {
-		// 释放锁的时候，有可能因为持锁之后方法执行时间大于锁的有效期，此时有可能已经被另外一个线程持有锁，所以不能直接删除
-		try {
-			List<String> keys = new ArrayList<>();
-			keys.add(key);
-			List<String> args = new ArrayList<>();
-			args.add(lockFlag.get());
+    @Override
+    public boolean releaseLock(String key) {
+        // 释放锁的时候，有可能因为持锁之后方法执行时间大于锁的有效期，此时有可能已经被另外一个线程持有锁，所以不能直接删除
+        try {
+            List<String> keys = new ArrayList<>();
+            keys.add(key);
+            List<String> args = new ArrayList<>();
+            args.add(lockFlag.get());
 
-			// 使用lua脚本删除redis中匹配value的key，可以避免由于方法执行时间过长而redis锁自动过期失效的时候误删其他线程的锁
-			// spring自带的执行脚本方法中，集群模式直接抛出不支持执行脚本的异常，所以只能拿到原redis的connection来执行脚本
+            // 使用lua脚本删除redis中匹配value的key，可以避免由于方法执行时间过长而redis锁自动过期失效的时候误删其他线程的锁
+            // spring自带的执行脚本方法中，集群模式直接抛出不支持执行脚本的异常，所以只能拿到原redis的connection来执行脚本
 
-			Long result = redisTemplate.execute((RedisCallback<Long>) connection -> {
+            Long result = redisTemplate.execute((RedisCallback<Long>) connection -> {
                 Object nativeConnection = connection.getNativeConnection();
                 // 集群模式和单机模式虽然执行脚本的方法一样，但是没有共同的接口，所以只能分开执行
                 // 集群模式
@@ -103,14 +103,14 @@ public class RedisDistributedLock extends AbstractDistributedLock {
                 return 0L;
             });
 
-			return result != null && result > 0;
-		} catch (Exception e) {
-			logger.error("release lock occured an exception", e);
-		} finally {
-			// 清除掉ThreadLocal中的数据，避免内存溢出
-			lockFlag.remove();
-		}
-		return false;
-	}
+            return result != null && result > 0;
+        } catch (Exception e) {
+            logger.error("release lock occured an exception", e);
+        } finally {
+            // 清除掉ThreadLocal中的数据，避免内存溢出
+            lockFlag.remove();
+        }
+        return false;
+    }
 
 }

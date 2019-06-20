@@ -23,7 +23,7 @@ public class RedisTool {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisTool.class);
 
     //Lua脚本，确保原子性
-    private static final String UNLOCK="if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+    private static final String UNLOCK = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 
     /**
      * @param redisTemplate 客户端

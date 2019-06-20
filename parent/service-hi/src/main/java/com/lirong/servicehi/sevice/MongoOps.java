@@ -25,20 +25,19 @@ public class MongoOps {
     private MongoTemplate mongoTemplate;
 
     /**
-     *
      * @param collectionClass 数据库中的类
      * @return CloseableIterator  需要关闭{@link CloseableIterator#close()}
      * Returns a {@link CloseableIterator} that wraps the a Mongo DB {@link Cursor} that needs to be closed
      */
-    public <T> CloseableIterator<T> getAllAsStream(Class<T> collectionClass){
+    public <T> CloseableIterator<T> getAllAsStream(Class<T> collectionClass) {
 
         mongoTemplate.getCollection("user_test");
-        Criteria criteria=new Criteria();
+        Criteria criteria = new Criteria();
         return mongoTemplate.stream(new Query(criteria), collectionClass);
     }
 
-    public <T> void getAllAsStream(Class<T> collectionClass, Consumer<? super T> action){
-        Criteria criteria=new Criteria();
+    public <T> void getAllAsStream(Class<T> collectionClass, Consumer<? super T> action) {
+        Criteria criteria = new Criteria();
         CloseableIterator<T> stream = mongoTemplate.stream(new Query(criteria), collectionClass);
         stream.forEachRemaining(action);
         stream.close();

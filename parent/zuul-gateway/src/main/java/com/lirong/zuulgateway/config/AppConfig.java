@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
 
     @Bean
-    public RewriteSendResponseFilter rewriteSendResponseFilter(ZuulProperties zuulProperties){
+    public RewriteSendResponseFilter rewriteSendResponseFilter(ZuulProperties zuulProperties) {
         return new RewriteSendResponseFilter(zuulProperties);
     }
 }

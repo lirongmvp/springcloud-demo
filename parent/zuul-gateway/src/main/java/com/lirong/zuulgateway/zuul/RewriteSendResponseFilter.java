@@ -37,7 +37,7 @@ public class RewriteSendResponseFilter extends SendResponseFilter {
 
     @Override
     public boolean shouldFilter() {
-       return true;
+        return true;
     }
 
     @Override
@@ -45,14 +45,14 @@ public class RewriteSendResponseFilter extends SendResponseFilter {
         try {
             writeResponse();
             addResponseHeaders();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    private void writeResponse() throws Exception{
+    private void writeResponse() throws Exception {
         RequestContext context = RequestContext.getCurrentContext();
         // there is no body to send
         if (context.getResponseBody() == null
@@ -61,17 +61,17 @@ public class RewriteSendResponseFilter extends SendResponseFilter {
         }
 
         String requestURI = context.getRequest().getRequestURI();
-        System.out.println("requestURI"+requestURI);
-        if(requestURI.contains("service-hi/hi")){
+        System.out.println("requestURI" + requestURI);
+        if (requestURI.contains("service-hi/hi")) {
             InputStream stream = context.getResponseDataStream();
             String body = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
-            context.setResponseBody("new body: "+body);
+            context.setResponseBody("new body: " + body);
         }
 
 
     }
 
-    private void addResponseHeaders(){
+    private void addResponseHeaders() {
 
     }
 

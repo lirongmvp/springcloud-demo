@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface FeignService {
     /**
      * 返回值关注body中的数据结构
+     *
      * @param name
      * @return
      */

@@ -3,9 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.lirong</groupId>
+        <groupId>com.example</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>service-hi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -41,6 +42,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -65,9 +70,20 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-test-support</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
+
         <dependencies>
             <dependency>
                 <groupId>com.amazonaws</groupId>

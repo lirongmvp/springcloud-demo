@@ -18,11 +18,10 @@ public class ZuulGatewayApplication {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ZuulGatewayApplication.class, args);
         Map<String, ZuulFilter> type = applicationContext.getBeansOfType(ZuulFilter.class);
         for (String s : type.keySet()) {
-            System.out.println(s+"="+type.get(s));
+            System.out.println(s + "=" + type.get(s));
         }
 
     }
-
 
 
 }

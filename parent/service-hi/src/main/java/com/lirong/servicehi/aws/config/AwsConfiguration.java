@@ -18,7 +18,7 @@ public class AwsConfiguration {
     private String accessKey;
     private String secretKey;
     /**
-     * 
+     *
      */
     private String serviceEndpoint;
     private String region = Region.CN_Northwest_1.getFirstRegionId();

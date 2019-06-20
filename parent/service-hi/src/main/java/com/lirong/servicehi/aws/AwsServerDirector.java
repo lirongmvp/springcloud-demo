@@ -37,9 +37,8 @@ public class AwsServerDirector {
 
     /**
      * 创建bucket
-     * 
-     * @param bucketName
-     *            名称
+     *
+     * @param bucketName 名称
      */
     public void createBucket(String bucketName) {
         if (!amazonS3.doesBucketExistV2(bucketName)) {
@@ -51,13 +50,10 @@ public class AwsServerDirector {
 
     /**
      * 上传对象
-     * 
-     * @param bucketName
-     *            存储桶名称
-     * @param key
-     *            键
-     * @param file
-     *            文件
+     *
+     * @param bucketName 存储桶名称
+     * @param key        键
+     * @param file       文件
      * @return
      */
     public void putObject(String bucketName, String key, File file) {
@@ -73,11 +69,9 @@ public class AwsServerDirector {
 
     /**
      * 批量删除key前缀的对象
-     * 
-     * @param bucketName
-     *            存储桶
-     * @param prefix
-     *            key前缀
+     *
+     * @param bucketName 存储桶
+     * @param prefix     key前缀
      */
     public void deleteObjectsByPrefix(String bucketName, String prefix) {
         ObjectListing objectListing = amazonS3.listObjects(bucketName, prefix);
@@ -98,11 +92,9 @@ public class AwsServerDirector {
 
     /**
      * 删除单个文件
-     * 
-     * @param bucketName
-     *            桶名称
-     * @param key
-     *            对象键
+     *
+     * @param bucketName 桶名称
+     * @param key        对象键
      */
     public void deleteObject(String bucketName, String key) {
         amazonS3.deleteObject(bucketName, key);
@@ -111,11 +103,9 @@ public class AwsServerDirector {
 
     /**
      * 对象是否存在
-     * 
-     * @param bucketName
-     *            桶名称
-     * @param key
-     *            对象键
+     *
+     * @param bucketName 桶名称
+     * @param key        对象键
      * @return true 存在 false 不存在
      */
     public Boolean existObject(String bucketName, String key) {

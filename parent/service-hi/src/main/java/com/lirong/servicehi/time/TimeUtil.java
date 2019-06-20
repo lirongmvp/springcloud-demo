@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * Title: TimeUtil <br>
  * Description: TimeUtil <br>
  * Date: 2019年05月30日
- *
+ * <p>
  * 稳定定时任务
  *
  * @author lirong
@@ -20,42 +20,46 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimeUtil {
 
-    public static void task(String name, List<Task> tasks){
+    public static void task(String name, List<Task> tasks) {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(tasks.size(),
-                new BasicThreadFactory.Builder().namingPattern(name+"-pool-%d").daemon(false).build());
+                new BasicThreadFactory.Builder().namingPattern(name + "-pool-%d").daemon(false).build());
 
-        tasks.forEach(task -> executor.scheduleAtFixedRate(task.getRunnable(),task.getInitialDelay(),task.getPeriod(),
+        tasks.forEach(task -> executor.scheduleAtFixedRate(task.getRunnable(), task.getInitialDelay(), task.getPeriod(),
                 task.getTimeUnit()));
     }
 
-    public static TaskBuilder builder(){
+    public static TaskBuilder builder() {
         return new TaskBuilder();
     }
 
-    public static class TaskBuilder{
-
-        private long initialDelay=0;
+    public static class TaskBuilder {
+        /**
+         * 刚开始执行任务是延时时间
+         */
+        private long initialDelay = 0;
 
         private List<Task> tasks = new ArrayList<>();
 
         public TaskBuilder() {
         }
 
-        public TaskBuilder add(long initialDelay, long period, TimeUnit timeUnit,Runnable runnable){
-            tasks.add(new Task(initialDelay,period,timeUnit,runnable));
+        public TaskBuilder add(long initialDelay, long period, TimeUnit timeUnit, Runnable runnable) {
+            tasks.add(new Task(initialDelay, period, timeUnit, runnable));
             return this;
         }
-        public TaskBuilder add( long period,Runnable runnable){
-            tasks.add(new Task(initialDelay,period,runnable));
+
+        public TaskBuilder add(long period, Runnable runnable) {
+            tasks.add(new Task(initialDelay, period, runnable));
             return this;
         }
-        public void build(String poolName){
-            TimeUtil.task(poolName,tasks);
+
+        public void build(String poolName) {
+            TimeUtil.task(poolName, tasks);
         }
 
     }
 
-    public static class Task{
+    public static class Task {
 
         private long initialDelay;
 

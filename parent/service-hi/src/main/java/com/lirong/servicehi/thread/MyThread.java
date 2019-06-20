@@ -43,8 +43,9 @@ public class MyThread implements Runnable {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("" + "-pool-%d").build();
         ThreadPoolExecutor ll = new ThreadPoolExecutor(2, 3, 0, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(4),(r, executor1) -> {
+                new ArrayBlockingQueue<>(4), namedThreadFactory, (r, executor1) -> {
             try {
+                //当队列满了，最大线程池满了，在过来任何需要按照该策略处理，当队列数量大于最大数量80%,先睡一会让线程处理至低于80%后再添加任务
                 while (executor1.getQueue().size() > 4 * 0.8) {
                     System.out.println("线程池睡眠...");
                     Thread.sleep(50L);
@@ -55,15 +56,15 @@ public class MyThread implements Runnable {
             }
             executor1.submit(r);
         });
-        int i =40;
-        while (i-->0){
+        int i = 40;
+        while (i-- > 0) {
             System.out.println("=======");
-            ll.submit(()->{
-                System.out.println("时间："+System.currentTimeMillis());
+            ll.submit(() -> {
+                System.out.println("时间：" + System.currentTimeMillis());
             });
         }
         ll.shutdown();
-        while (!ll.awaitTermination(30,TimeUnit.SECONDS)){
+        while (!ll.awaitTermination(30, TimeUnit.SECONDS)) {
             System.out.println("等待线程池关闭");
         }
 
