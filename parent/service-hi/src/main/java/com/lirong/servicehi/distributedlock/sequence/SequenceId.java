@@ -5,6 +5,8 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * Title: SequenceId <br>
  * Description: SequenceId <br>
@@ -22,12 +24,15 @@ public class SequenceId {
     public static final String SEQUENCEID = "SequenceId";
 
 
+
     public SequenceId(RedisTemplate<String, String> redisTemplate) {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
         ops.setIfAbsent(SEQUENCEID, "10000");
         this.redisTemplate = redisTemplate;
     }
+    public void   setRedisId(String id){
 
+    }
     /**
      * 得到数据库中的数字，然后加1
      *
@@ -35,7 +40,7 @@ public class SequenceId {
      * @return
      */
     public Long getId(String key) {
-        RedisAtomicLong redisAtomicLong = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
+        RedisAtomicLong redisAtomicLong = new RedisAtomicLong(key, Objects.requireNonNull(redisTemplate.getConnectionFactory()));
         return redisAtomicLong.getAndIncrement();
     }
 }
