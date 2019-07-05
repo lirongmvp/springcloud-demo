@@ -1,5 +1,6 @@
 package com.lirong.servicehi.controller;
 
+import com.lirong.servicehi.config.LimitFieldConfig;
 import com.lirong.servicehi.dao.User;
 import com.lirong.servicehi.distributedlock.RedisTool;
 import com.lirong.servicehi.distributedlock.lock.RedisDistributedLock;
@@ -59,13 +60,19 @@ public class Controller {
     private MongoTemplate mongoTemplate;
     @Autowired
     private UserResp userResp;
+    @Autowired
+    private LimitFieldConfig limitFieldConfig;
 
     @Autowired
-    public Controller(RedisTemplate<String, String> redisTemplate, SequenceId sequenceId) {
-        this.sequenceId = sequenceId;
+    public Controller(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.myDistributedLock = new MyRedisDistributedLock(redisTemplate);
         this.redisDistributedLock = new RedisDistributedLock(redisTemplate);
+    }
+    @GetMapping("/apollo")
+    public void apollo(){
+
+        System.out.println(limitFieldConfig.toString());
     }
 
     @GetMapping("/mongo")

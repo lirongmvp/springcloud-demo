@@ -6,17 +6,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@EnableEurekaClient
+//@EnableEurekaClient
+@EnableScheduling
 @Import(myService.class)
 public class ServiceHiApplication {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceHiApplication.class);

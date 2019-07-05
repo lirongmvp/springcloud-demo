@@ -16,13 +16,12 @@ import java.util.Objects;
  * @version 1.0.0
  * @since jdk8
  */
-@Component
+//@Component
 public class SequenceId {
 
     private RedisTemplate<String, String> redisTemplate;
 
     public static final String SEQUENCEID = "SequenceId";
-
 
 
     public SequenceId(RedisTemplate<String, String> redisTemplate) {

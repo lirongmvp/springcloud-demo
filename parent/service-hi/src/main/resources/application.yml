@@ -40,12 +40,16 @@ spring:
 
 
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://admin:admin123@localhost:8761/eureka/
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://admin:admin123@localhost:8761/eureka/
 
-
+apollo:
+  bootstrap:
+    enabled: true
+  plugin:
+    namespace: yangpeng-test
 
 
 #aws:
