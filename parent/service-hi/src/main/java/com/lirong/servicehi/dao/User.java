@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * Title: User <br>
  * Description: User <br>
@@ -22,6 +24,7 @@ public class User {
     private String id;
     //ObjectMapper会根据value字段找
 //    @JsonProperty(value = "name")
+    @NotBlank
     private String name;
 
     public User(String id, String name) {

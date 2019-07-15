@@ -2,6 +2,7 @@ package com.lirong.servicehi.config;
 
 import com.ctrip.framework.apollo.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lirong.servicehi.filter.HttpServletRequestReplacedFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,10 @@ public class BeanConfig {
             log.error("limitField-config  err:{} " + property, e);
             return new LimitFieldConfig();
         }
+    }
+    @Bean
+    public HttpServletRequestReplacedFilter httpServletRequestReplacedFilter(){
+        return new HttpServletRequestReplacedFilter();
     }
 
 }

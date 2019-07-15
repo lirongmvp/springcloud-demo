@@ -3,6 +3,7 @@ package com.lirong.servicehi.time;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,7 +18,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MyScheduled {
 
-
+    /**
+     * 没两秒执行
+     */
     @Scheduled(cron = "0/2 * * * * ? ")
     public void test(){
         Runnable runnable = new Runnable() {
@@ -28,7 +31,7 @@ public class MyScheduled {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println("睡5秒....");
+                System.out.println(LocalDateTime.now()+"睡5秒....");
             }
         };
         new Thread(runnable).start();

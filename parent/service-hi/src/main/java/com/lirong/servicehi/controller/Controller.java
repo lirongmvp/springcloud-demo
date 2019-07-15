@@ -11,6 +11,7 @@ import com.lirong.servicehi.resp.UserResp;
 import com.lirong.servicehi.sevice.MongoOps;
 import com.lirong.servicehi.sevice.myService;
 import com.lirong.servicehi.thread.MyThread;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.util.CloseableIterator;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -40,6 +42,7 @@ import java.util.concurrent.TimeUnit;
  * @since jdk8
  */
 @RestController
+@Slf4j
 public class Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(Controller.class);
     @Value("${server.port}")
@@ -71,7 +74,6 @@ public class Controller {
     }
     @GetMapping("/apollo")
     public void apollo(){
-
         System.out.println(limitFieldConfig.toString());
     }
 
@@ -122,10 +124,16 @@ public class Controller {
      * 加注解,"Content type 'application/json;charset=UTF-8'
      */
     @PostMapping("/test")
-    public void hi2(@RequestBody User user) {
+    public void hi2(@RequestBody @Validated User user) throws Exception  {
         myService.test();
         System.out.println(user);
     }
+    @GetMapping("/test1")
+    public void hi21(@Validated User user) throws Exception  {
+        myService.test();
+        System.out.println(user);
+    }
+
 
 
     @GetMapping("/hi")

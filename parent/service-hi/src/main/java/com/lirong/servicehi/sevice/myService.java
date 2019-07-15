@@ -25,9 +25,16 @@ public class myService implements CommandLineRunner, ApplicationRunner {
         this.testService = testService;
     }
 
-    public void test() {
-//        testService.t();
-        System.out.println("创建myservice");
+    public void test() throws Exception {
+        try {
+
+            System.out.println("创建myservice");
+            throw  new Exception("自定义异常");
+        }catch (Exception e ){
+            throw e;
+
+        }
+
     }
 
     @Override
